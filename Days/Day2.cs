@@ -3,7 +3,8 @@
     internal static class Day2
     {
         private static readonly string path = $@"{System.AppDomain.CurrentDomain.BaseDirectory}\Days\Day2.txt";
-        private static string[] input = Common.GetInput(path);
+        private static readonly string[] input = Common.GetInput(path);
+
         public static int Day2Part1Result()
         {
             int result = TotalScore(input);
@@ -36,9 +37,9 @@
         public static int TotalScorePart2(string[] input)
         {
             var score = 0;
+
             foreach (string play in input)
             {
-                
                 var split = play.Split(' ');
                 var opponent = split[0];
                 var result = split[1];
@@ -53,54 +54,50 @@
 
         private static string MoveToChoose(string opponent, string result)
         {
-            var move = string.Empty;
+            string move;
 
-            if (result.Equals("X")) // Lose
+            switch (result)
             {
-                if (opponent.Equals("A")) // Rock
+                // Lose
+                case "X":
+                    move = opponent switch
+                    {
+                        // Rock
+                        "A" => "Z",
+                        // Paper
+                        "B" => "X",
+                        _ => "Y"
+                    };
+                    break;
+                // Draw
+                case "Y":
+                    move = opponent switch
+                    {
+                        // Rock
+                        "A" => "X",
+                        // Paper
+                        "B" => "Y",
+                        _ => "Z"
+                    };
+                    break;
+                // Win
+                default:
                 {
-                    move = "Z";
-                }
-                else if (opponent.Equals("B")) // Paper
-                {
-                    move = "X";
-                }
-                else // Scissor
-                {
-                    // Win
-                    move = "Y";
-                }
-            }
-            else if (result.Equals("Y")) // Draw
-            {
-                if (opponent.Equals("A")) // Rock
-                {
-                    move = "X";
-                }
-                else if (opponent.Equals("B")) // Paper
-                {
-                    move = "Y";
-                }
-                else // Scissor
-                {
-                    // Win
-                    move = "Z";
-                }
-            }
-            else // Win
-            {
-                if (opponent.Equals("A")) // Rock
-                {
-                    move = "Y";
-                }
-                else if (opponent.Equals("B")) // Paper
-                {
-                    move = "Z";
-                }
-                else // Scissor
-                {
-                    // Win
-                    move = "X";
+                    if (opponent.Equals("A")) // Rock
+                    {
+                        move = "Y";
+                    }
+                    else if (opponent.Equals("B")) // Paper
+                    {
+                        move = "Z";
+                    }
+                    else // Scissor
+                    {
+                        // Win
+                        move = "X";
+                    }
+
+                    break;
                 }
             }
 
@@ -109,62 +106,35 @@
 
         private static int Points(string opponent, string me)
         {
-            var points = 0;
-
-            if (me.Equals("X")) // Rock
+            var points = me switch
             {
-                if (opponent.Equals("A")) // Rock
+                // Rock
+                "X" => opponent switch
                 {
-                    // Draw
-                    points = 1 + 3;
-                }
-                else if (opponent.Equals("B")) // Paper
+                    // Rock
+                    "A" => 1 + 3,
+                    // Paper
+                    "B" => 1,
+                    _ => 1 + 6
+                },
+                // Paper
+                "Y" => opponent switch
                 {
-                    // Loss
-                    points = 1;
-                }
-                else // Scissor
+                    // Rock
+                    "A" => 2 + 6,
+                    // Paper
+                    "B" => 2 + 3,
+                    _ => 2
+                },
+                _ => opponent switch
                 {
-                    // Win
-                    points = 1 + 6;
+                    // Rock
+                    "A" => 3,
+                    // Paper
+                    "B" => 3 + 6,
+                    _ => 3 + 3
                 }
-            }
-            else if (me.Equals("Y")) // Paper
-            {
-                if (opponent.Equals("A")) // Rock
-                {
-                    // Win
-                    points = 2 + 6;
-                }
-                else if (opponent.Equals("B")) // Paper
-                {
-                    // Draw
-                    points = 2 + 3;
-                }
-                else // Scissor
-                {
-                    // Loss
-                    points = 2;
-                }
-            }
-            else // Scissor
-            {
-                if (opponent.Equals("A")) // Rock
-                {
-                    // Loss
-                    points = 3;
-                }
-                else if (opponent.Equals("B")) // Paper
-                {
-                    // Win
-                    points = 3 + 6 ;
-                }
-                else // Scissor
-                {
-                    // Draw
-                    points = 3 + 3;
-                }
-            }
+            };
 
             return points;
         }
